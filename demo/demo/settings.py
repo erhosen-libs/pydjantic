@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 from typing import Dict, List
 
-from pydantic import AnyUrl, BaseSettings, Field
+from pydantic import BaseSettings, Field
 from pydantic.fields import Undefined
 
 from pydjantic import BaseDBConfig, to_django
@@ -25,7 +25,7 @@ BASE_DIR = CUR_DIR.parent
 
 class DatabaseSettings(BaseDBConfig):
     # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-    default: AnyUrl = Field(default=Undefined, env="DATABASE_URL")
+    default: str = Field(default=str(f'sqlite:///{BASE_DIR}/db.sqlite3'), env="DATABASE_URL")
 
     class Config:
         env_file = CUR_DIR / '.env'
@@ -35,6 +35,7 @@ class GeneralSettings(BaseSettings):
     # https://docs.djangoproject.com/en/dev/ref/settings/
     SECRET_KEY: str = Field(default=Undefined, env='DJANGO_SECRET_KEY')
     DEBUG: bool = Field(default=False, env='DEBUG')
+    DATABASES: DatabaseSettings = DatabaseSettings()
 
     ALLOWED_HOSTS: List[str] = []
     ROOT_URLCONF: str = 'demo.urls'
