@@ -1,5 +1,5 @@
 bump_version:
-	@poetry version
+	@poetry version minor
 
 clean:
 	@rm -rf build dist .eggs *.egg-info
