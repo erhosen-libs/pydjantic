@@ -14,5 +14,8 @@ __pycache__/
 coverage.xml
 .pytest_cache/
 
+# Distribution
+dist
+
 # mypy
 .mypy_cache/

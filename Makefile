@@ -15,7 +15,7 @@ format: clean
 test:
 	@python -m pytest --cov=pydjantic tests/ -sq
 
-build: clean test
+build: test clean
 	@poetry build
 
 publish:
