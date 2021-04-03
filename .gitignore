@@ -1,0 +1,18 @@
+# IntelliJ project files
+.idea
+
+# General
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Unit test / coverage reports
+.coverage
+.cache
+coverage.xml
+.pytest_cache/
+
+# mypy
+.mypy_cache/
