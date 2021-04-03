@@ -1,8 +1,25 @@
 [tool.poetry]
 name = "pydjantic"
 version = "0.1.0"
-description = ""
-authors = ["Vyazovetskov Vladimir <erhosen@gmail.com>"]
+description = "Pydantic Settings for Django"
+authors = ["Vladimir Vyazovetskov <erhosen@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/ErhoSen/pydjantic"
+repository = "https://github.com/ErhoSen/pydjantic"
+keywords = ["pydantic", "django", "PydanticSettings", "settings"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Other Environment",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+include = [
+    "LICENSE",
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
