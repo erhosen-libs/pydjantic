@@ -68,3 +68,29 @@ Install using `pip install -U pydjantic` or `poetry add pydjantic`.
 
 ## Example
 In the `/demo` directory you can find a [working Django app](https://github.com/ErhoSen/pydjantic/tree/master/demo) with [pydjantic settings](https://github.com/ErhoSen/pydjantic/blob/master/demo/demo/settings.py).
+
+## Database config
+
+**Pydjantic** comes with a special helper for managing DB configs - `BaseDBConfig`. See example below:
+```py
+from pydantic import Field, PostgresDsn
+from pydjantic import BaseDBConfig
+
+
+class DatabaseConfig(BaseDBConfig):
+    default: PostgresDsn = Field(
+        default="postgres://user:password@hostname:5432/database_name", env="DATABASE_URL"
+    )
+
+db_settings = DatabaseConfig()
+assert db_settings.default == {
+    'CONN_MAX_AGE': 0,
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'HOST': 'hostname',
+    'NAME': 'database_name',
+    'PASSWORD': 'password',
+    'PORT': 5432,
+    'USER': 'user',
+}
+```
+Transformation from dsn to django format is done by [dj-database-url](https://pypi.org/project/dj-database-url/).
