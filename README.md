@@ -6,7 +6,7 @@
 [![license](https://img.shields.io/github/license/erhosen/pydjantic.svg)](https://github.com/ErhoSen/pydjantic/blob/master/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Use Pydantic Settings in your Django app.
+Use Pydantic Settings in your Django application.
 
 ![Pydjantc django settings](https://github.com/ErhoSen/pydjantic/raw/master/images/pydjantic.png "Pydjantc django settings")
 
@@ -60,8 +60,8 @@ to_django(ProjectSettings())
 ```
 You can create as many classes/modules as you want, to achieve perfect settings' management.
 Divide your settings by domains, and then create final `ProjectSettings` class, that inherits from these domains.
-Provide the instance of `ProjectSettings` to `to_django` function.
 
+Provide the instance of `ProjectSettings` to `to_django` function.
 That's all, your django settings will work as expected.
 
 ## Installation
