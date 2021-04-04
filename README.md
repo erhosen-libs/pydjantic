@@ -6,18 +6,23 @@
 [![license](https://img.shields.io/github/license/erhosen/pydjantic.svg)](https://github.com/ErhoSen/pydjantic/blob/master/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Use Pydantic Settings for your Django app.
+Using Pydantic Settings in your Django app.
 
 ## Introduction
 
 If you are tired of the mess in your Django Settings - I feel your pain:
-* Long as Dostoevsky's "Crime and punishment" `settings.py` file
-* `from production import *` anti-pattern
-* `try: <import> except: ImportError` anti-pattern
-* `base.py`, `production.py`, `local.py`, `domain.py` - bunch of modules that override each other
+* Ridiculously long `settings.py` file, with ASCII-art separators
+* `from common import *` Python [anti-pattern](https://www.geeksforgeeks.org/why-import-star-in-python-is-a-bad-idea/)
+* `try: <import> except: ImportError` Python [anti-pattern](https://stackoverflow.com/questions/14050281/how-to-check-if-a-python-module-exists-without-importing-it)
+* `base.py`, `production.py`, `local.py`, `domain.py` - bunch of unrelated modules that override each other
 * [django-environ](https://github.com/joke2k/django-environ) library, that did even worse...
 
-**Pydjantic** offers to divide the settings only by their domain:
+On the other hand we have [Pydatic Settings](https://pydantic-docs.helpmanual.io/usage/settings/),
+which is de facto standard for all non-django projects.
+
+If you love Pydatic settings management approach, **Pydjantic** is a right tool for you.
+
+**Pydjantic** allows you to define your settings in familiar way - just inherit from `BaseSettings` like you would in non-django app.
 ```py
 from typing import List
 
@@ -51,11 +56,15 @@ class ProjectSettings(GeneralSettings, StaticSettings, SentrySettings):
 
 to_django(ProjectSettings())
 ```
-You can create as many classes/modules as you want, to achieve perfect settings management.
+You can create as many classes/modules as you want, to achieve perfect settings' management.
+Divide your settings by domains, and then create final `ProjectSettings` class, that inherits from these domains.
+Provide the instance of `ProjectSettings` to `to_django` function.
 
-Just create final `ProjectSettings` class, that inherits from these domains, and provide its instance to `to_django` function.
 That's all, your django settings will work as expected.
 
 ## Installation
 
-Install using `pip install -U pydantic` or `poetry add pydjantic`.
+Install using `pip install -U pydjantic` or `poetry add pydjantic`.
+
+## Example
+In the `/demo` directory you can find a [working Django app](https://github.com/ErhoSen/pydjantic/tree/master/demo) with [pydjantic settings](https://github.com/ErhoSen/pydjantic/blob/master/demo/demo/settings.py).
