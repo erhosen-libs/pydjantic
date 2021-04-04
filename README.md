@@ -8,6 +8,8 @@
 
 Using Pydantic Settings in your Django app.
 
+![Pydjantc django settings](https://github.com/ErhoSen/pydjantic/raw/master/images/pydjantic.png "Pydjantc django settings")
+
 ## Introduction
 
 If you are tired of the mess in your Django Settings - I feel your pain:
