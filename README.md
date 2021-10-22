@@ -19,10 +19,10 @@ If you are tired of the mess in your Django Settings - I feel your pain:
 * `base.py`, `production.py`, `local.py`, `domain.py` - bunch of unrelated modules that override each other
 * [django-environ](https://github.com/joke2k/django-environ) library, that did even worse...
 
-On the other hand we have [Pydatic Settings](https://pydantic-docs.helpmanual.io/usage/settings/),
+On the other hand we have [Pydantic Settings](https://pydantic-docs.helpmanual.io/usage/settings/),
 which is de facto standard for all non-django projects.
 
-If you love Pydatic settings management approach, **Pydjantic** is a right tool for you.
+If you love Pydantic settings management approach, **Pydjantic** is a right tool for you.
 
 **Pydjantic** allows you to define your settings in familiar way - just inherit from `BaseSettings` like you would in non-django app.
 ```py
