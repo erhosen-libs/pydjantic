@@ -13,18 +13,18 @@ Use Pydantic Settings in your Django application.
 ## Introduction
 
 If you are tired of the mess in your Django Settings - I feel your pain:
-* Ridiculously long `settings.py` file, with ASCII-art separators
+* Ridiculously long `settings.py` file, with ASCII-art separation
 * `from common import *` Python [anti-pattern](https://www.geeksforgeeks.org/why-import-star-in-python-is-a-bad-idea/)
 * `try: <import> except: ImportError` Python [anti-pattern](https://stackoverflow.com/questions/14050281/how-to-check-if-a-python-module-exists-without-importing-it)
 * `base.py`, `production.py`, `local.py`, `domain.py` - bunch of unrelated modules that override each other
-* [django-environ](https://github.com/joke2k/django-environ) library, that did even worse...
+* [django-environ](https://github.com/joke2k/django-environ) library, that do even worse...
 
 On the other hand we have [Pydantic Settings](https://pydantic-docs.helpmanual.io/usage/settings/),
-which is de facto standard for all non-django projects.
+which is de-facto standard for all non-django projects.
 
 If you love Pydantic settings management approach, **Pydjantic** is a right tool for you.
 
-**Pydjantic** allows you to define your settings in familiar way - just inherit from `BaseSettings` like you would in non-django app.
+**Pydjantic** allows you to define your settings in familiar way - just inherit from `BaseSettings`:
 ```py
 from typing import List
 
@@ -71,7 +71,7 @@ Install using `pip install -U pydjantic` or `poetry add pydjantic`.
 ## Example
 In the `/demo` directory you can find a [working Django app](https://github.com/ErhoSen/pydjantic/tree/master/demo) with [pydjantic settings](https://github.com/ErhoSen/pydjantic/blob/master/demo/demo/settings.py).
 
-## Database config
+## Database configuration
 
 **Pydjantic** comes with a special helper for managing DB configs - `BaseDBConfig`. See example below:
 ```py
@@ -81,7 +81,7 @@ from pydjantic import BaseDBConfig
 
 class DatabaseConfig(BaseDBConfig):
     default: PostgresDsn = Field(
-        default="postgres://user:password@hostname:5432/database_name", env="DATABASE_URL"
+        default="postgres://user:password@hostname:5432/database_name", env="DATABASE_URL",
     )
 
 db_settings = DatabaseConfig()
@@ -95,4 +95,10 @@ assert db_settings.default == {
     'USER': 'user',
 }
 ```
-Transformation from dsn to django format is done by [dj-database-url](https://pypi.org/project/dj-database-url/).
+Additionally, you can specify `conn_max_age` and `ssl_require` options.
+
+They will be provided as-is to [dj-database-url](https://pypi.org/project/dj-database-url/) library, that handles the transformation from dsn to django format.
+```python
+class DatabaseConfig(BaseDBConfig):
+    default: PostgresDsn = Field(default=Undefined, env="DATABASE_URL", conn_max_age=60, ssl_require=True)
+```
