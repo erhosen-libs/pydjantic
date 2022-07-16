@@ -37,7 +37,7 @@ def test_conn_max_age_ssl_require():
             default="postgres://user:password@hostname:5432/database_name",
             env="DATABASE_URL",
             conn_max_age=60,
-            ssl_require=True
+            ssl_require=True,
         )
 
     db_settings = DatabaseConfig()

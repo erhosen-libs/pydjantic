@@ -95,7 +95,7 @@ assert db_settings.default == {
     'USER': 'user',
 }
 ```
-Additionally, you can specify `conn_max_age` and `ssl_require` options. 
+Additionally, you can specify `conn_max_age` and `ssl_require` options.
 
 They will be provided as-is to [dj-database-url](https://pypi.org/project/dj-database-url/) library, that handles the transformation from dsn to django format.
 ```python
