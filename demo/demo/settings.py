@@ -25,7 +25,12 @@ BASE_DIR = CUR_DIR.parent
 
 class DatabaseSettings(BaseDBConfig):
     # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-    default: str = Field(default=str(f'sqlite:///{BASE_DIR}/db.sqlite3'), env="DATABASE_URL")
+    default: str = Field(
+        default=str(f'sqlite:///{BASE_DIR}/db.sqlite3'),
+        env="DATABASE_URL",
+        conn_max_age=60,
+        ssl_require=True
+    )
 
     class Config:
         env_file = CUR_DIR / '.env'
