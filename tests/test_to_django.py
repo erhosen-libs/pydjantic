@@ -1,56 +1,8 @@
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseSettings, Field, PostgresDsn
 
 from pydjantic import BaseDBConfig, to_django
-
-
-def test_empty_database_config():
-    class DatabaseConfig(BaseDBConfig):
-        default: Optional[PostgresDsn] = Field()
-
-    db_settings = DatabaseConfig()
-    assert db_settings.default == {}
-
-
-def test_database_config():
-    class DatabaseConfig(BaseDBConfig):
-        default: PostgresDsn = Field(
-            default="postgres://user:password@hostname:5432/database_name", env="DATABASE_URL"
-        )
-
-    db_settings = DatabaseConfig()
-    assert db_settings.default == {
-        'CONN_MAX_AGE': 0,
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'hostname',
-        'NAME': 'database_name',
-        'PASSWORD': 'password',
-        'PORT': 5432,
-        'USER': 'user',
-    }
-
-
-def test_conn_max_age_ssl_require():
-    class DatabaseConfig(BaseDBConfig):
-        default: PostgresDsn = Field(
-            default="postgres://user:password@hostname:5432/database_name",
-            env="DATABASE_URL",
-            conn_max_age=60,
-            ssl_require=True,
-        )
-
-    db_settings = DatabaseConfig()
-    assert db_settings.default == {
-        'CONN_MAX_AGE': 60,
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'hostname',
-        'NAME': 'database_name',
-        'OPTIONS': {'sslmode': 'require'},
-        'PASSWORD': 'password',
-        'PORT': 5432,
-        'USER': 'user',
-    }
 
 
 def test_to_django_settings():

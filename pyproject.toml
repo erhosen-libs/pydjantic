@@ -30,6 +30,7 @@ pydantic = {extras = ["dotenv"], version = "^1.8.1"}
 pytest = "^6.2.2"
 pytest-cov = "^2.11.1"
 pre-commit = "^2.11.1"
+tempenv = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

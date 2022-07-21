@@ -12,6 +12,9 @@ class BaseDBConfig(BaseSettings):
         if value is None:
             return {}
 
+        if not isinstance(value, str):
+            return value
+
         conn_max_age: int = field.field_info.extra.get("conn_max_age", 0)
         ssl_require: bool = field.field_info.extra.get('ssl_require', False)
         return dj_database_url.parse(value, conn_max_age=conn_max_age, ssl_require=ssl_require)
