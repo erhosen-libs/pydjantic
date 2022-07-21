@@ -74,31 +74,51 @@ In the `/demo` directory you can find a [working Django app](https://github.com/
 ## Database configuration
 
 **Pydjantic** comes with a special helper for managing DB configs - `BaseDBConfig`. See example below:
-```py
+```python
 from pydantic import Field, PostgresDsn
 from pydjantic import BaseDBConfig
 
 
 class DatabaseConfig(BaseDBConfig):
-    default: PostgresDsn = Field(
-        default="postgres://user:password@hostname:5432/database_name", env="DATABASE_URL",
-    )
+    default: PostgresDsn = Field(default="postgres://user:password@hostname:5432/dbname", env="DATABASE_URL")
 
 db_settings = DatabaseConfig()
 assert db_settings.default == {
     'CONN_MAX_AGE': 0,
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'HOST': 'hostname',
-    'NAME': 'database_name',
+    'NAME': 'dbname',
     'PASSWORD': 'password',
     'PORT': 5432,
     'USER': 'user',
 }
 ```
-Additionally, you can specify `conn_max_age` and `ssl_require` options.
 
-They will be provided as-is to [dj-database-url](https://pypi.org/project/dj-database-url/) library, that handles the transformation from dsn to django format.
+Also, you can define database configurations directly:
+```python
+from pydantic import BaseSettings, Field
+
+class PostgresDB(BaseSettings):
+    ENGINE: str = 'django.db.backends.postgresql_psycopg2'
+    HOST: str = Field(default='localhost', env='DATABASE_HOST')
+    NAME: str = Field(default='dbname', env='DATABASE_NAME')
+    PASSWORD: str = Field(default='password', env='DATABASE_PASSWORD')
+    PORT: int = Field(default=5432, env='DATABASE_PORT')
+    USER: str = Field(default='user', env='DATABASE_USER')
+    OPTIONS: dict = Field(default={}, env='DATABASE_OPTIONS')
+    CONN_MAX_AGE: int = Field(default=0, env='DATABASE_CONN_MAX_AGE')
+
+class DatabaseConfig(BaseSettings):
+    default = PostgresDB()
+```
+
+Or mix these approaches:
 ```python
 class DatabaseConfig(BaseDBConfig):
-    default: PostgresDsn = Field(default=Undefined, env="DATABASE_URL", conn_max_age=60, ssl_require=True)
+    default = Field(default="postgres://user:password@hostname:5432/dbname")
+    replica = PostgresDB()
 ```
+
+For more examples see [tests](tests/test_db_config.py).
+
+Transformation from dsn to django format is done by [dj-database-url](https://pypi.org/project/dj-database-url/) library.

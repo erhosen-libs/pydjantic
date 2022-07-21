@@ -12,9 +12,17 @@ class BaseDBConfig(BaseSettings):
         if value is None:
             return {}
 
-        conn_max_age: int = field.field_info.extra.get("conn_max_age", 0)
-        ssl_require: bool = field.field_info.extra.get('ssl_require', False)
-        return dj_database_url.parse(value, conn_max_age=conn_max_age, ssl_require=ssl_require)
+        if not isinstance(value, str):
+            return value
+
+        kwargs = {}
+        conn_max_age: int = field.field_info.extra.get("conn_max_age", None)
+        ssl_require: bool = field.field_info.extra.get('ssl_require', None)
+        if conn_max_age is not None:
+            kwargs['conn_max_age'] = conn_max_age
+        if ssl_require is not None:
+            kwargs['ssl_require'] = ssl_require
+        return dj_database_url.parse(value, **kwargs)
 
 
 def to_django(settings: BaseSettings):
