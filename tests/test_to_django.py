@@ -8,7 +8,7 @@ from pydjantic import BaseDBConfig, to_django
 def test_to_django_settings():
     class DatabaseConfig(BaseDBConfig):
         default: PostgresDsn = Field(
-            default="postgres://user:password@hostname:5432/database_name", env="DATABASE_URL"
+            default="postgres://user:password@hostname:5432/dbname", env="DATABASE_URL"
         )
 
     class GeneralSettings(BaseSettings):
@@ -40,7 +40,7 @@ def test_to_django_settings():
             'CONN_MAX_AGE': 0,
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'HOST': 'hostname',
-            'NAME': 'database_name',
+            'NAME': 'dbname',
             'PASSWORD': 'password',
             'PORT': 5432,
             'USER': 'user',
