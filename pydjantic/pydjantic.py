@@ -2,7 +2,7 @@ import inspect
 from typing import Optional
 
 import dj_database_url
-from pydantic import BaseSettings, validator
+from pydantic import BaseSettings, validator, SecretStr, SecretBytes
 from pydantic.fields import ModelField
 
 
@@ -32,5 +32,7 @@ def to_django(settings: BaseSettings):
         if isinstance(value, BaseSettings):
             # for DATABASES and other complicated objects
             parent_frame.f_locals[key] = value.dict()
+        elif isinstance(value, SecretStr) or isinstance(value, SecretBytes):
+            parent_frame.f_locals[key] = value.get_secret_value()
         else:
             parent_frame.f_locals[key] = value
