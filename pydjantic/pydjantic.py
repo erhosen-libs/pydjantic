@@ -2,7 +2,7 @@ import inspect
 from typing import Optional
 
 import dj_database_url
-from pydantic import BaseSettings, validator, SecretStr, SecretBytes
+from pydantic import BaseSettings, SecretBytes, SecretStr, validator
 from pydantic.fields import ModelField
 
 
