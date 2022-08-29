@@ -1,5 +1,5 @@
 import inspect
-from typing import Optional
+from typing import Optional, Any
 
 import dj_database_url
 from pydantic import BaseSettings, validator, SecretStr, SecretBytes
@@ -28,11 +28,19 @@ class BaseDBConfig(BaseSettings):
 def to_django(settings: BaseSettings):
     stack = inspect.stack()
     parent_frame = stack[1][0]
-    for key, value in settings:
-        if isinstance(value, BaseSettings):
+
+    def _get_actual_value(val: Any):
+        if isinstance(val, BaseSettings):
             # for DATABASES and other complicated objects
-            parent_frame.f_locals[key] = value.dict()
-        elif isinstance(value, SecretStr) or isinstance(value, SecretBytes):
-            parent_frame.f_locals[key] = value.get_secret_value()
+            return _get_actual_value(val.dict())
+        elif isinstance(val, dict):
+            return {k: _get_actual_value(v) for k, v in val.items()}
+        elif isinstance(val, list):
+            return [_get_actual_value(item) for item in val]
+        elif isinstance(val, SecretStr) or isinstance(val, SecretBytes):
+            return val.get_secret_value()
         else:
-            parent_frame.f_locals[key] = value
+            return val
+
+    for key, value in settings:
+        parent_frame.f_locals[key] = _get_actual_value(value)

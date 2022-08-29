@@ -1,6 +1,6 @@
-from typing import List
-
-from pydantic import BaseSettings, Field, PostgresDsn
+from typing import List, Dict
+from deepdiff import DeepDiff
+from pydantic import BaseSettings, Field, PostgresDsn, SecretStr, validator
 
 from pydjantic import BaseDBConfig, to_django
 
@@ -46,3 +46,85 @@ def test_to_django_settings():
             'USER': 'user',
         }
     }
+
+
+def test_to_django_recursive():
+    class CSettings(BaseSettings):
+        SETTING_C: str = 'C'
+
+    class BSettings(BaseSettings):
+        SETTING_B: CSettings = CSettings()
+
+    class NestedSettings(BaseSettings):
+        SETTING_A: BSettings = BSettings()
+
+    to_django(NestedSettings())
+
+    diff = DeepDiff(locals()['SETTING_A'], {
+        'SETTING_B': {
+            'SETTING_C': 'C'
+        }
+    })
+    assert diff == {}
+
+
+def test_to_django_with_secrets():
+    class DBSettings(BaseSettings):
+        PASSWORD: SecretStr
+
+    class Settings(BaseSettings):
+        DATABASE: DBSettings = DBSettings(PASSWORD='password')
+
+    settings = Settings()
+    to_django(settings)
+
+    assert isinstance(settings.DATABASE.PASSWORD, SecretStr)
+    assert '*' in str(settings.DATABASE.PASSWORD)
+    assert locals()['DATABASE']['PASSWORD'] == 'password'
+
+
+def test_to_django_with_secrets2():
+    """
+    Tests that a secret in the nested dict is unwrapped
+    """
+
+    class Settings(BaseSettings):
+        USERNAME: str
+        PASSWORD: SecretStr
+        USERPASS: Dict = {}
+
+        @validator('USERPASS')
+        def populate_userpass(cls, value, values: Dict):
+            return {
+                'USER': values.get('USER'),
+                'PASS': values.get('PASSWORD')
+            }
+
+    settings = Settings(USERNAME='user', PASSWORD='pass')
+    to_django(settings)
+
+    assert isinstance(settings.USERPASS['PASS'], SecretStr)
+    assert '*' in str(settings.USERPASS['PASS'])
+    assert locals()['USERPASS']['PASS'] is 'pass'
+
+
+def test_to_django_nested_list():
+    class ConnectionSettings(BaseSettings):
+        HOST: str
+
+    class Settings(BaseSettings):
+        CONNECTIONS: List[ConnectionSettings] = [
+            ConnectionSettings(HOST='google.com'),
+            ConnectionSettings(HOST='github.com'),
+            ConnectionSettings(HOST='stackoverflow.com')
+        ]
+
+    settings = Settings()
+    to_django(settings)
+
+    diff = DeepDiff(locals()['CONNECTIONS'], [
+        {'HOST': 'google.com'},
+        {'HOST': 'github.com'},
+        {'HOST': 'stackoverflow.com'},
+    ])
+    assert diff == {}
