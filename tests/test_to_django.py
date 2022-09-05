@@ -1,4 +1,5 @@
-from typing import List, Dict
+from typing import Dict, List
+
 from deepdiff import DeepDiff
 from pydantic import BaseSettings, Field, PostgresDsn, SecretStr, validator
 
@@ -60,11 +61,7 @@ def test_to_django_recursive():
 
     to_django(NestedSettings())
 
-    diff = DeepDiff(locals()['SETTING_A'], {
-        'SETTING_B': {
-            'SETTING_C': 'C'
-        }
-    })
+    diff = DeepDiff(locals()['SETTING_A'], {'SETTING_B': {'SETTING_C': 'C'}})
     assert diff == {}
 
 
@@ -95,17 +92,14 @@ def test_to_django_with_secrets2():
 
         @validator('USERPASS')
         def populate_userpass(cls, value, values: Dict):
-            return {
-                'USER': values.get('USER'),
-                'PASS': values.get('PASSWORD')
-            }
+            return {'USER': values.get('USER'), 'PASS': values.get('PASSWORD')}
 
     settings = Settings(USERNAME='user', PASSWORD='pass')
     to_django(settings)
 
     assert isinstance(settings.USERPASS['PASS'], SecretStr)
     assert '*' in str(settings.USERPASS['PASS'])
-    assert locals()['USERPASS']['PASS'] is 'pass'
+    assert locals()['USERPASS']['PASS'] == 'pass'
 
 
 def test_to_django_nested_list():
@@ -116,15 +110,18 @@ def test_to_django_nested_list():
         CONNECTIONS: List[ConnectionSettings] = [
             ConnectionSettings(HOST='google.com'),
             ConnectionSettings(HOST='github.com'),
-            ConnectionSettings(HOST='stackoverflow.com')
+            ConnectionSettings(HOST='stackoverflow.com'),
         ]
 
     settings = Settings()
     to_django(settings)
 
-    diff = DeepDiff(locals()['CONNECTIONS'], [
-        {'HOST': 'google.com'},
-        {'HOST': 'github.com'},
-        {'HOST': 'stackoverflow.com'},
-    ])
+    diff = DeepDiff(
+        locals()['CONNECTIONS'],
+        [
+            {'HOST': 'google.com'},
+            {'HOST': 'github.com'},
+            {'HOST': 'stackoverflow.com'},
+        ],
+    )
     assert diff == {}
