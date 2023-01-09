@@ -22,7 +22,7 @@ include = [
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 dj-database-url = "^0.5.0"
 pydantic = {extras = ["dotenv"], version = "^1.8.1"}
 
