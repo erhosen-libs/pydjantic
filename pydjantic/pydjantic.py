@@ -16,12 +16,13 @@ class BaseDBConfig(BaseSettings):
             return value
 
         kwargs = {}
-        conn_max_age: int = field.field_info.extra.get("conn_max_age", None)
-        ssl_require: bool = field.field_info.extra.get('ssl_require', None)
-        if conn_max_age is not None:
-            kwargs['conn_max_age'] = conn_max_age
-        if ssl_require is not None:
-            kwargs['ssl_require'] = ssl_require
+        # dj_database_url.parse does not accept **kwargs, so we can't blindly feed it with everything
+        # https://github.com/jazzband/dj-database-url/blob/master/dj_database_url.py#L79
+        known_dj_database_url_kwargs = ['engine', 'conn_max_age', 'conn_health_checks', 'ssl_require', 'test_options']
+        for kwarg in known_dj_database_url_kwargs:
+            field_extra = field.field_info.extra.get(kwarg)
+            if field_extra is not None:
+                kwargs[kwarg] = field_extra
         return dj_database_url.parse(value, **kwargs)
 
 

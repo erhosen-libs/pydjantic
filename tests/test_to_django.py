@@ -39,7 +39,8 @@ def test_to_django_settings():
     assert locals()['DATABASES'] == {
         'default': {
             'CONN_MAX_AGE': 0,
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'CONN_HEALTH_CHECKS': False,
+            'ENGINE': 'django.db.backends.postgresql',
             'HOST': 'hostname',
             'NAME': 'dbname',
             'PASSWORD': 'password',
