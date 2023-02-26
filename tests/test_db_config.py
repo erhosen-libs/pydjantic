@@ -54,7 +54,7 @@ def test_dsn_extra_params():
         'PASSWORD': 'password',
         'PORT': 5432,
         'USER': 'user',
-        'TEST': {'NAME': 'mytestdb'}
+        'TEST': {'NAME': 'mytestdb'},
     }
 
 
@@ -85,7 +85,7 @@ def test_exact():
             'PORT': 5432,
             'OPTIONS': {},
             'CONN_MAX_AGE': 0,
-            'CONN_HEALTH_CHECKS': False
+            'CONN_HEALTH_CHECKS': False,
         }
     }
 
@@ -143,6 +143,6 @@ def test_env_vars_for_exact_config():
                 'PORT': 5432,
                 'OPTIONS': {'sslmode': 'require'},
                 'CONN_MAX_AGE': 60,
-                'CONN_HEALTH_CHECKS': False
+                'CONN_HEALTH_CHECKS': False,
             },
         }

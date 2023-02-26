@@ -18,7 +18,13 @@ class BaseDBConfig(BaseSettings):
         kwargs = {}
         # dj_database_url.parse does not accept **kwargs, so we can't blindly feed it with everything
         # https://github.com/jazzband/dj-database-url/blob/master/dj_database_url.py#L79
-        known_dj_database_url_kwargs = ['engine', 'conn_max_age', 'conn_health_checks', 'ssl_require', 'test_options']
+        known_dj_database_url_kwargs = [
+            'engine',
+            'conn_max_age',
+            'conn_health_checks',
+            'ssl_require',
+            'test_options',
+        ]
         for kwarg in known_dj_database_url_kwargs:
             field_extra = field.field_info.extra.get(kwarg)
             if field_extra is not None:
