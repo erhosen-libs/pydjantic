@@ -35,7 +35,7 @@ def test_dsn():
 def test_dsn_extra_params():
     class DatabaseConfig(BaseDBConfig):
         default = Field(
-            default="postgres://user:password@hostname:5432/dbname",
+            default="postgres://user:password@hostname:5432/dbname?connect_timeout=10",
             conn_max_age=60,
             ssl_require=True,
             conn_health_checks=True,
@@ -50,7 +50,7 @@ def test_dsn_extra_params():
         'ENGINE': 'my.custom.backend',
         'HOST': 'hostname',
         'NAME': 'dbname',
-        'OPTIONS': {'sslmode': 'require'},
+        'OPTIONS': {'connect_timeout': 10, 'sslmode': 'require'},
         'PASSWORD': 'password',
         'PORT': 5432,
         'USER': 'user',
