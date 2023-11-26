@@ -1,35 +1,42 @@
 import inspect
-from typing import Any, Optional
+from typing import Any
 
 import dj_database_url
-from pydantic import BaseSettings, SecretBytes, SecretStr, validator
-from pydantic.fields import ModelField
+from pydantic import SecretBytes, SecretStr, field_validator, ValidationInfo
+from pydantic_core import MultiHostUrl
+from pydantic_settings import BaseSettings
 
 
 class BaseDBConfig(BaseSettings):
-    @validator("*")
-    def format_config_from_dsn(cls, value: Optional[str], field: ModelField):
+    @field_validator("*")
+    def format_config_from_dsn(cls, value: Any, info: ValidationInfo):
         if value is None:
             return {}
 
-        if not isinstance(value, str):
+        if not isinstance(value, (str, MultiHostUrl)):
             return value
 
         kwargs = {}
         # dj_database_url.parse does not accept **kwargs, so we can't blindly feed it with everything
-        # https://github.com/jazzband/dj-database-url/blob/master/dj_database_url.py#L79
+        # https://github.com/jazzband/dj-database-url/blob/9292e1fa8af99a73e6c9cbdd7321236741016c06/dj_database_url/__init__.py#L79C8-L79C8
         known_dj_database_url_kwargs = [
-            'engine',
-            'conn_max_age',
-            'conn_health_checks',
-            'ssl_require',
-            'test_options',
+            "engine",
+            "conn_max_age",
+            "conn_health_checks",
+            "disable_server_side_cursors",
+            "ssl_require",
+            "test_options",
         ]
-        for kwarg in known_dj_database_url_kwargs:
-            field_extra = field.field_info.extra.get(kwarg)
-            if field_extra is not None:
-                kwargs[kwarg] = field_extra
-        return dj_database_url.parse(value, **kwargs)
+
+        if info.field_name:
+            extra = cls.model_fields[info.field_name].json_schema_extra
+            if extra:
+                for kwarg in known_dj_database_url_kwargs:
+                    if isinstance(extra, dict):
+                        field_extra = extra.get(kwarg)
+                        if field_extra is not None:
+                            kwargs[kwarg] = field_extra
+        return dj_database_url.parse(str(value), **kwargs)
 
 
 def to_django(settings: BaseSettings):
@@ -39,7 +46,7 @@ def to_django(settings: BaseSettings):
     def _get_actual_value(val: Any):
         if isinstance(val, BaseSettings):
             # for DATABASES and other complicated objects
-            return _get_actual_value(val.dict())
+            return _get_actual_value(val.model_dump())
         elif isinstance(val, dict):
             return {k: _get_actual_value(v) for k, v in val.items()}
         elif isinstance(val, list):
