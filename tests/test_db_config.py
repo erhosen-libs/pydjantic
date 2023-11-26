@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from pydantic import Field, PostgresDsn
 from pydantic_settings import BaseSettings
@@ -9,8 +9,8 @@ from pydjantic import BaseDBConfig
 
 def test_empty():
     class DatabaseConfig(BaseDBConfig):
-        default: PostgresDsn | None = None
-        replica: Dict | None = None
+        default: Optional[PostgresDsn] = None
+        replica: Optional[Dict] = None
 
     db_settings = DatabaseConfig()
     assert db_settings.model_dump() == {"default": {}, "replica": {}}
