@@ -30,12 +30,11 @@ class BaseDBConfig(BaseSettings):
 
         if info.field_name:
             extra = cls.model_fields[info.field_name].json_schema_extra
-            if extra:
+            if isinstance(extra, dict):
                 for kwarg in known_dj_database_url_kwargs:
-                    if isinstance(extra, dict):
-                        field_extra = extra.get(kwarg)
-                        if field_extra is not None:
-                            kwargs[kwarg] = field_extra
+                    field_extra = extra.get(kwarg)
+                    if field_extra is not None:
+                        kwargs[kwarg] = field_extra
         return dj_database_url.parse(str(value), **kwargs)
 
 
