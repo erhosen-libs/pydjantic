@@ -14,8 +14,8 @@ from pathlib import Path
 from typing import Dict, List
 
 from pydantic import Field
-from pydantic_settings import SettingsConfigDict, BaseSettings
 from pydantic.fields import Undefined
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from pydjantic import BaseDBConfig, to_django
 

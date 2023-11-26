@@ -1,10 +1,10 @@
 from typing import Dict
 
 from pydantic import Field, PostgresDsn
+from pydantic_settings import BaseSettings
 from tempenv import TemporaryEnvironment
 
 from pydjantic import BaseDBConfig
-from pydantic_settings import BaseSettings
 
 
 def test_empty():

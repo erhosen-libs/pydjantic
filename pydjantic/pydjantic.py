@@ -2,7 +2,7 @@ import inspect
 from typing import Any
 
 import dj_database_url
-from pydantic import SecretBytes, SecretStr, field_validator, ValidationInfo
+from pydantic import SecretBytes, SecretStr, ValidationInfo, field_validator
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings
 

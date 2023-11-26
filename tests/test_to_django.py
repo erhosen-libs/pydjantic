@@ -1,10 +1,10 @@
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from deepdiff import DeepDiff
-from pydantic import Field, PostgresDsn, SecretStr, field_validator, ValidationInfo
+from pydantic import Field, PostgresDsn, SecretStr, ValidationInfo, field_validator
+from pydantic_settings import BaseSettings
 
 from pydjantic import BaseDBConfig, to_django
-from pydantic_settings import BaseSettings
 
 
 def test_to_django_settings():
