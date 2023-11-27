@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
-from pydantic import BaseSettings, Field, PostgresDsn
+from pydantic import Field, PostgresDsn
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from tempenv import TemporaryEnvironment
 
 from pydjantic import BaseDBConfig
@@ -8,115 +9,120 @@ from pydjantic import BaseDBConfig
 
 def test_empty():
     class DatabaseConfig(BaseDBConfig):
-        default: Optional[PostgresDsn] = Field()
-        replica: Optional[Dict] = Field()
+        default: Optional[PostgresDsn] = None
+        replica: Optional[Dict] = None
 
     db_settings = DatabaseConfig()
-    assert db_settings.dict() == {'default': {}, 'replica': {}}
+    assert db_settings.model_dump() == {"default": {}, "replica": {}}
 
 
 def test_dsn():
     class DatabaseConfig(BaseDBConfig):
-        default = Field(default="postgres://user:password@hostname:5432/dbname")
+        default: str = Field(default="postgres://user:password@hostname:5432/dbname")
 
     db_settings = DatabaseConfig()
     assert db_settings.default == {
-        'CONN_MAX_AGE': 0,
-        'CONN_HEALTH_CHECKS': False,
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'hostname',
-        'NAME': 'dbname',
-        'PASSWORD': 'password',
-        'PORT': 5432,
-        'USER': 'user',
+        "CONN_MAX_AGE": 0,
+        "CONN_HEALTH_CHECKS": False,
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "hostname",
+        "NAME": "dbname",
+        "PASSWORD": "password",
+        "PORT": 5432,
+        "USER": "user",
     }
 
 
 def test_dsn_extra_params():
     class DatabaseConfig(BaseDBConfig):
-        default = Field(
+        default: str = Field(
             default="postgres://user:password@hostname:5432/dbname",
-            conn_max_age=60,
-            ssl_require=True,
-            conn_health_checks=True,
-            engine='my.custom.backend',
-            test_options={'NAME': 'mytestdb'},
+            json_schema_extra={
+                "test_options": {"NAME": "mytestdb"},
+                "engine": "my.custom.backend",
+                "conn_health_checks": True,
+                "ssl_require": "True",
+                "conn_max_age": 60,
+            },
         )
 
     db_settings = DatabaseConfig()
     assert db_settings.default == {
-        'CONN_MAX_AGE': 60,
-        'CONN_HEALTH_CHECKS': True,
-        'ENGINE': 'my.custom.backend',
-        'HOST': 'hostname',
-        'NAME': 'dbname',
-        'OPTIONS': {'sslmode': 'require'},
-        'PASSWORD': 'password',
-        'PORT': 5432,
-        'USER': 'user',
-        'TEST': {'NAME': 'mytestdb'},
+        "CONN_MAX_AGE": 60,
+        "CONN_HEALTH_CHECKS": True,
+        "ENGINE": "my.custom.backend",
+        "HOST": "hostname",
+        "NAME": "dbname",
+        "OPTIONS": {"sslmode": "require"},
+        "PASSWORD": "password",
+        "PORT": 5432,
+        "USER": "user",
+        "TEST": {"NAME": "mytestdb"},
     }
 
 
 class PostgresDB(BaseSettings):
-    ENGINE: str = 'django.db.backends.postgresql'
-    HOST: str = Field(default='replicahost', env='DATABASE_HOST')
-    NAME: str = Field(default='replicadbname', env='DATABASE_NAME')
-    PASSWORD: str = Field(default='replicapwd', env='DATABASE_PASSWORD')
-    PORT: int = Field(default=5432, env='DATABASE_PORT')
-    USER: str = Field(default='replicauser', env='DATABASE_USER')
-    OPTIONS: dict = Field(default={}, env='DATABASE_OPTIONS')
-    CONN_MAX_AGE: int = Field(default=0, env='DATABASE_CONN_MAX_AGE')
-    CONN_HEALTH_CHECKS: bool = Field(default=False, env="DATABASE_CONN_HEALTH_CHECKS")
+    model_config = SettingsConfigDict(env_prefix="DATABASE_")
+
+    ENGINE: str = "django.db.backends.postgresql"
+    HOST: str = Field(default="replicahost")
+    NAME: str = Field(default="replicadbname")
+    PASSWORD: str = Field(default="replicapwd")
+    PORT: int = Field(default=5432)
+    USER: str = Field(default="replicauser")
+    OPTIONS: dict = Field(default={})
+    CONN_MAX_AGE: int = Field(default=0)
+    CONN_HEALTH_CHECKS: bool = Field(default=False)
 
 
 def test_exact():
     class DatabaseConfig(BaseSettings):
-        default = PostgresDB()
+        default: PostgresDB = PostgresDB()
 
     db_settings = DatabaseConfig()
-    assert db_settings.dict() == {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'HOST': 'replicahost',
-            'NAME': 'replicadbname',
-            'USER': 'replicauser',
-            'PASSWORD': 'replicapwd',
-            'PORT': 5432,
-            'OPTIONS': {},
-            'CONN_MAX_AGE': 0,
-            'CONN_HEALTH_CHECKS': False,
+    assert db_settings.model_dump() == {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "HOST": "replicahost",
+            "NAME": "replicadbname",
+            "USER": "replicauser",
+            "PASSWORD": "replicapwd",
+            "PORT": 5432,
+            "OPTIONS": {},
+            "CONN_MAX_AGE": 0,
+            "CONN_HEALTH_CHECKS": False,
         }
     }
 
 
 def test_dsn_and_exact_config():
     class DatabaseConfig(BaseDBConfig):
-        default = Field(default="postgres://user:password@hostname:5432/dbname")
-        replica = PostgresDB()
+
+        default: str = Field(default="postgres://user:password@hostname:5432/dbname")
+        replica: PostgresDB = PostgresDB()
 
     db_settings = DatabaseConfig()
-    assert db_settings.dict() == {
-        'default': {
-            'CONN_MAX_AGE': 0,
-            'CONN_HEALTH_CHECKS': False,
-            'ENGINE': 'django.db.backends.postgresql',
-            'HOST': 'hostname',
-            'NAME': 'dbname',
-            'PASSWORD': 'password',
-            'PORT': 5432,
-            'USER': 'user',
+    assert db_settings.model_dump() == {
+        "default": {
+            "CONN_MAX_AGE": 0,
+            "CONN_HEALTH_CHECKS": False,
+            "ENGINE": "django.db.backends.postgresql",
+            "HOST": "hostname",
+            "NAME": "dbname",
+            "PASSWORD": "password",
+            "PORT": 5432,
+            "USER": "user",
         },
-        'replica': {
-            'CONN_MAX_AGE': 0,
-            'CONN_HEALTH_CHECKS': False,
-            'ENGINE': 'django.db.backends.postgresql',
-            'HOST': 'replicahost',
-            'NAME': 'replicadbname',
-            'USER': 'replicauser',
-            'PASSWORD': 'replicapwd',
-            'OPTIONS': {},
-            'PORT': 5432,
+        "replica": {
+            "CONN_MAX_AGE": 0,
+            "CONN_HEALTH_CHECKS": False,
+            "ENGINE": "django.db.backends.postgresql",
+            "HOST": "replicahost",
+            "NAME": "replicadbname",
+            "USER": "replicauser",
+            "PASSWORD": "replicapwd",
+            "OPTIONS": {},
+            "PORT": 5432,
         },
     }
 
@@ -130,19 +136,20 @@ def test_env_vars_for_exact_config():
     ):
 
         class DatabaseConfig(BaseSettings):
-            default = PostgresDB()
+
+            default: PostgresDB = PostgresDB()
 
         db_settings = DatabaseConfig()
-        assert db_settings.dict() == {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'HOST': 'replicahost',
-                'NAME': 'replicadbname',
-                'USER': 'replicauser',
-                'PASSWORD': 'replicapwd',
-                'PORT': 5432,
-                'OPTIONS': {'sslmode': 'require'},
-                'CONN_MAX_AGE': 60,
-                'CONN_HEALTH_CHECKS': False,
+        assert db_settings.model_dump() == {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "HOST": "replicahost",
+                "NAME": "replicadbname",
+                "USER": "replicauser",
+                "PASSWORD": "replicapwd",
+                "PORT": 5432,
+                "OPTIONS": {"sslmode": "require"},
+                "CONN_MAX_AGE": 60,
+                "CONN_HEALTH_CHECKS": False,
             },
         }
