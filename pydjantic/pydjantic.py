@@ -4,10 +4,12 @@ from typing import Any
 import dj_database_url
 from pydantic import SecretBytes, SecretStr, ValidationInfo, field_validator
 from pydantic_core import MultiHostUrl
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BaseDBConfig(BaseSettings):
+    model_config = SettingsConfigDict(extra="ignore")
+
     @field_validator("*")
     def format_config_from_dsn(cls, value: Any, info: ValidationInfo):
         if value is None:
