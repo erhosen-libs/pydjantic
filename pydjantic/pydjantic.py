@@ -2,10 +2,9 @@ import inspect
 from typing import Any, Optional
 
 import dj_database_url
-from pydantic import SecretBytes, SecretStr, validator, field_validator
+from pydantic import SecretBytes, SecretStr, field_validator
 from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic.v1.fields import Field
 
 
 class BaseDBConfig(BaseSettings):
@@ -30,9 +29,7 @@ class BaseDBConfig(BaseSettings):
             "test_options",
         ]
         for kwarg in known_dj_database_url_kwargs:
-            json_schema_extra = (
-                cls.model_fields[info.field_name].json_schema_extra or {}
-            )
+            json_schema_extra = cls.model_fields[info.field_name].json_schema_extra or {}
             field_extra = json_schema_extra.get(kwarg)
             if field_extra is not None:
                 kwargs[kwarg] = field_extra

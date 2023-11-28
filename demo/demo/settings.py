@@ -13,10 +13,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 from typing import Dict, List
 
-from pydantic import  Field
+from pydantic import Field
 from pydantic.v1.fields import Undefined
 from pydantic_settings import BaseSettings
-
 
 from pydjantic import BaseDBConfig, to_django
 
@@ -41,7 +40,9 @@ class DatabaseSettings(BaseDBConfig):
 class GeneralSettings(BaseSettings):
     # https://docs.djangoproject.com/en/dev/ref/settings/
     SECRET_KEY: str = Field(default=Undefined, alias="DJANGO_SECRET_KEY")
-    DEBUG: bool = Field(default=False, )
+    DEBUG: bool = Field(
+        default=False,
+    )
     DATABASES: DatabaseSettings = DatabaseSettings()
 
     ALLOWED_HOSTS: List[str] = []

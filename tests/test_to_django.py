@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from deepdiff import DeepDiff
-from pydantic import Field, PostgresDsn, SecretStr, validator, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import BaseSettings
 
@@ -15,7 +15,7 @@ def test_to_django_settings():
         )
 
     class GeneralSettings(BaseSettings):
-        DEBUG: bool = Field(default=False )
+        DEBUG: bool = Field(default=False)
         INSTALLED_APPS: List[str] = [
             "django.contrib.admin",
             "django.contrib.auth",
