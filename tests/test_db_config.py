@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 
 from pydantic import Field, PostgresDsn
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from tempenv import TemporaryEnvironment
 
 from pydjantic import BaseDBConfig
@@ -36,12 +36,14 @@ def test_dsn():
 def test_dsn_extra_params():
     class DatabaseConfig(BaseDBConfig):
         default: str = Field(
-            default="postgres://user:password@hostname:5432/dbname",
-            conn_max_age=60,
-            ssl_require=True,
-            conn_health_checks=True,
-            engine="my.custom.backend",
-            test_options={"NAME": "mytestdb"},
+            default="postgres://user:password@hostname:5432/dbname?connect_timeout=10",
+            json_schema_extra={
+                "test_options": {"NAME": "mytestdb"},
+                "engine": "my.custom.backend",
+                "conn_health_checks": True,
+                "ssl_require": "True",
+                "conn_max_age": 60,
+            },
         )
 
     db_settings = DatabaseConfig()
@@ -51,7 +53,7 @@ def test_dsn_extra_params():
         "ENGINE": "my.custom.backend",
         "HOST": "hostname",
         "NAME": "dbname",
-        "OPTIONS": {"sslmode": "require"},
+        "OPTIONS": {"connect_timeout": 10, "sslmode": "require"},
         "PASSWORD": "password",
         "PORT": 5432,
         "USER": "user",
@@ -60,15 +62,17 @@ def test_dsn_extra_params():
 
 
 class PostgresDB(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="DATABASE_")
+
     ENGINE: str = "django.db.backends.postgresql"
-    HOST: str = Field(default="replicahost", validation_alias="DATABASE_HOST")
-    NAME: str = Field(default="replicadbname", validation_alias="DATABASE_NAME")
-    PASSWORD: str = Field(default="replicapwd", validation_alias="DATABASE_PASSWORD")
-    PORT: int = Field(default=5432, validation_alias="DATABASE_PORT")
-    USER: str = Field(default="replicauser", validation_alias="DATABASE_USER")
-    OPTIONS: dict = Field(default={}, validation_alias="DATABASE_OPTIONS")
-    CONN_MAX_AGE: int = Field(default=0, validation_alias="DATABASE_CONN_MAX_AGE")
-    CONN_HEALTH_CHECKS: bool = Field(default=False, validation_alias="DATABASE_CONN_HEALTH_CHECKS")
+    HOST: str = Field(default="replicahost")
+    NAME: str = Field(default="replicadbname")
+    PASSWORD: str = Field(default="replicapwd")
+    PORT: int = Field(default=5432)
+    USER: str = Field(default="replicauser")
+    OPTIONS: dict = Field(default={})
+    CONN_MAX_AGE: int = Field(default=0)
+    CONN_HEALTH_CHECKS: bool = Field(default=False)
 
 
 def test_exact():
