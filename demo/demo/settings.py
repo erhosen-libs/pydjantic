@@ -15,7 +15,7 @@ from typing import Dict, List
 
 from pydantic import Field
 from pydantic.v1.fields import Undefined
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from pydjantic import BaseDBConfig, to_django
 
@@ -28,21 +28,17 @@ class DatabaseSettings(BaseDBConfig):
     # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
     default: str = Field(
         default=str(f"sqlite:///{BASE_DIR}/db.sqlite3"),
-        alias="DATABASE_URL",
+        validation_alias="DATABASE_URL",
         conn_max_age=0,
         ssl_require=False,
     )
-
-    class Config:
-        env_file = CUR_DIR / ".env"
+    model_config = SettingsConfigDict(env_file=CUR_DIR / ".env")
 
 
 class GeneralSettings(BaseSettings):
     # https://docs.djangoproject.com/en/dev/ref/settings/
-    SECRET_KEY: str = Field(default=Undefined, alias="DJANGO_SECRET_KEY")
-    DEBUG: bool = Field(
-        default=False,
-    )
+    SECRET_KEY: str = Field(default=Undefined, validation_alias="DJANGO_SECRET_KEY")
+    DEBUG: bool = Field(default=False)
     DATABASES: DatabaseSettings = DatabaseSettings()
 
     ALLOWED_HOSTS: List[str] = []
@@ -115,8 +111,7 @@ class StaticSettings(BaseSettings):
 
 
 class ProjectSettings(GeneralSettings, I18NSettings, StaticSettings):
-    class Config:
-        env_file = CUR_DIR / ".env"
+    model_config = SettingsConfigDict(env_file=CUR_DIR / ".env")
 
 
 to_django(ProjectSettings())

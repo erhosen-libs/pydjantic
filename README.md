@@ -2,13 +2,13 @@
 [![Build Status](https://github.com/ErhoSen/pydjantic/actions/workflows/main.yml/badge.svg)](https://github.com/ErhoSen/pydjantic/actions)
 [![codecov](https://codecov.io/gh/ErhoSen/pydjantic/branch/master/graph/badge.svg?token=BW5A0V3CR3)](https://codecov.io/gh/ErhoSen/pydjantic)
 [![pypi](https://img.shields.io/pypi/v/pydjantic.svg)](https://pypi.org/project/pydjantic/)
-[![versions](https://img.shields.io/pypi/pyversions/pydjantic.svg)](https://github.com/ErhoSen/pydjantic)
-[![license](https://img.shields.io/github/license/erhosen/pydjantic.svg)](https://github.com/ErhoSen/pydjantic/blob/master/LICENSE)
+[![versions](https://img.shields.io/pypi/pyversions/pydjantic.svg)](https://github.com/erhosen-libs/pydjantic)
+[![license](https://img.shields.io/github/license/erhosen/pydjantic.svg)](https://github.com/erhosen-libs/pydjantic/blob/master/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Use Pydantic Settings in your Django application.
 
-![Pydjantc django settings](https://github.com/ErhoSen/pydjantic/raw/master/images/pydjantic.png "Pydjantc django settings")
+![Pydjantc django settings](https://github.com/erhosen-libs/pydjantic/raw/master/images/pydjantic.png "Pydjantc django settings")
 
 ## Introduction
 
@@ -69,7 +69,7 @@ That's all, your django settings will work as expected.
 Install using `pip install -U pydjantic` or `poetry add pydjantic`.
 
 ## Example
-In the `/demo` directory you can find a [working Django app](https://github.com/ErhoSen/pydjantic/tree/master/demo) with [pydjantic settings](https://github.com/ErhoSen/pydjantic/blob/master/demo/demo/settings.py).
+In the `/demo` directory you can find a [working Django app](https://github.com/erhosen-libs/pydjantic/tree/master/demo) with [pydjantic settings](https://github.com/erhosen-libs/pydjantic/blob/master/demo/demo/settings.py).
 
 ## Database configuration
 

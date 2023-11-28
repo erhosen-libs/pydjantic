@@ -1,8 +1,7 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from deepdiff import DeepDiff
-from pydantic import Field, SecretStr, field_validator
-from pydantic_core.core_schema import FieldValidationInfo
+from pydantic import Field, PostgresDsn, SecretStr, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
 
 from pydjantic import BaseDBConfig, to_django
@@ -10,8 +9,9 @@ from pydjantic import BaseDBConfig, to_django
 
 def test_to_django_settings():
     class DatabaseConfig(BaseDBConfig):
-        default: str = Field(
+        default: PostgresDsn = Field(
             default="postgres://user:password@hostname:5432/dbname",
+            validation_alias="DATABASE_URL",
         )
 
     class GeneralSettings(BaseSettings):
@@ -94,7 +94,7 @@ def test_to_django_with_secrets2():
         USERPASS: Dict = {}
 
         @field_validator("USERPASS")
-        def populate_userpass(cls, value, info: FieldValidationInfo):
+        def populate_userpass(cls, value: Any, info: ValidationInfo):
             return {"USER": info.data.get("USERNAME"), "PASS": info.data.get("PASSWORD")}
 
     settings = Settings(USERNAME="user", PASSWORD="pass")
