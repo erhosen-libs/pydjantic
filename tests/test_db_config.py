@@ -76,7 +76,7 @@ class PostgresDB(BaseSettings):
 
 
 def test_exact():
-    class DatabaseConfig(BaseSettings):
+    class DatabaseConfig(BaseDBConfig):
         default: PostgresDB = PostgresDB()
 
     db_settings = DatabaseConfig()
