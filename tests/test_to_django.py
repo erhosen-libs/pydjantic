@@ -10,7 +10,8 @@ from pydjantic import BaseDBConfig, to_django
 def test_to_django_settings():
     class DatabaseConfig(BaseDBConfig):
         default: PostgresDsn = Field(
-            default="postgres://user:password@hostname:5432/dbname", env="DATABASE_URL"
+            default="postgres://user:password@hostname:5432/dbname",
+            validation_alias="DATABASE_URL",
         )
 
     class GeneralSettings(BaseSettings):

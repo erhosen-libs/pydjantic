@@ -38,7 +38,7 @@ class DatabaseSettings(BaseDBConfig):
 class GeneralSettings(BaseSettings):
     # https://docs.djangoproject.com/en/dev/ref/settings/
     SECRET_KEY: str = Field(default=Undefined, validation_alias="DJANGO_SECRET_KEY")
-    DEBUG: bool = Field(default=False, validation_alias="DEBUG")
+    DEBUG: bool = Field(default=False)
     DATABASES: DatabaseSettings = DatabaseSettings()
 
     ALLOWED_HOSTS: List[str] = []
