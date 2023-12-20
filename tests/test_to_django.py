@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 from deepdiff import DeepDiff
-from pydantic import Field, PostgresDsn, SecretStr, ValidationInfo, field_validator
+from pydantic import Field, PostgresDsn, SecretStr, ValidationInfo, computed_field, field_validator
 from pydantic_settings import BaseSettings
 
 from pydjantic import BaseDBConfig, to_django
@@ -128,3 +128,16 @@ def test_to_django_nested_list():
         ],
     )
     assert diff == {}
+
+
+def test_to_django_computed_fields():
+    class StorageSettings(BaseSettings):
+        FILE_STORAGE: str
+
+        @computed_field
+        def STORAGES(self) -> dict[str, dict[str, str]]:
+            return {"default": {"BACKEND": self.FILE_STORAGE}}
+
+    settings = StorageSettings(FILE_STORAGE="ExampleStorage")
+    to_django(settings)
+    assert locals()["STORAGES"]["default"]["BACKEND"] == "ExampleStorage"

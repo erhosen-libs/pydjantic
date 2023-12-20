@@ -57,5 +57,5 @@ def to_django(settings: BaseSettings):
         else:
             return val
 
-    for key, value in settings:
+    for key, value in settings.model_dump().items():
         parent_frame.f_locals[key] = _get_actual_value(value)
