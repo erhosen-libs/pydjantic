@@ -135,7 +135,7 @@ def test_to_django_computed_fields():
         FILE_STORAGE: str
 
         @computed_field
-        def STORAGES(self) -> dict[str, dict[str, str]]:
+        def STORAGES(self) -> Dict[str, Dict[str, str]]:
             return {"default": {"BACKEND": self.FILE_STORAGE}}
 
     settings = StorageSettings(FILE_STORAGE="ExampleStorage")
