@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydjantic"
-version = "1.1.0"
+version = "1.1.1"
 description = "Pydantic Settings for Django"
 authors = ["Vladimir Vyazovetskov <erhosen@gmail.com>"]
 license = "MIT"
