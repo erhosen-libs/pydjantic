@@ -23,9 +23,9 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-dj-database-url = "^2.1.0"
-pydantic = "^2.5.2"
-pydantic-settings = "^2.1.0"
+dj-database-url = ">=2.1.0"
+pydantic = ">=2.5.2"
+pydantic-settings = ">=2.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
